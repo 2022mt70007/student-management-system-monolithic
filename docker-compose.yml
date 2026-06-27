@@ -1,0 +1,62 @@
+
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: sms-monolith-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root_pass
+      MYSQL_DATABASE: sms_monolith_db
+      MYSQL_USER: sms_user
+      MYSQL_PASSWORD: sms_pass
+    ports:
+      - "3307:3306"
+    volumes:
+      - monolith_mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-usms_user", "-psms_pass"]
+      interval: 5s
+      timeout: 5s
+      retries: 15
+
+  mailhog:
+    image: mailhog/mailhog:v1.0.1
+    container_name: sms-monolith-mailhog
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+
+  monolith:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: sms-monolith
+    depends_on:
+      mysql:
+        condition: service_healthy
+      mailhog:
+        condition: service_started
+    environment:
+      SERVER_PORT: 8090
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_NAME: sms_monolith_db
+      DB_USER: sms_user
+      DB_PASSWORD: sms_pass
+      JWT_SECRET: ${JWT_SECRET:-StudentManagementSystemSecretKeyForJWT2024MustBeLongEnough}
+      APP_ENCRYPTION_KEY: ${APP_ENCRYPTION_KEY:-LocalDevEncryptionKeyChangeInProd}
+      MAIL_HOST: ${MAIL_HOST:-${SES_MAIL_HOST:-mailhog}}
+      MAIL_PORT: ${MAIL_PORT:-${SES_MAIL_PORT:-1025}}
+      MAIL_FROM: ${MAIL_FROM:-admin@sms.local}
+      SPRING_MAIL_USERNAME: ${SES_SMTP_USERNAME:-}
+      SPRING_MAIL_PASSWORD: ${SES_SMTP_PASSWORD:-}
+      MAIL_SMTP_AUTH: ${MAIL_SMTP_AUTH:-false}
+      MAIL_SMTP_STARTTLS: ${MAIL_SMTP_STARTTLS:-false}
+      BOOTSTRAP_ADMIN_EMAIL: ${BOOTSTRAP_ADMIN_EMAIL:-${MAIL_FROM:-admin@sms.local}}
+      REGISTRATION_BASE_URL: ${REGISTRATION_BASE_URL:-http://localhost:5173/register}
+      APP_SECURITY_ALLOWED_ORIGINS: ${APP_SECURITY_ALLOWED_ORIGINS:-http://localhost:5173,http://127.0.0.1:5173}
+    ports:
+      - "8090:8090"
+    restart: unless-stopped
+
+volumes:
+  monolith_mysql_data:

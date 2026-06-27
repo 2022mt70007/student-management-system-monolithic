@@ -1,0 +1,55 @@
+server:
+  port: ${SERVER_PORT:8090}
+
+spring:
+  application:
+    name: sms-monolith
+  datasource:
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:sms_monolith_db}?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    username: ${DB_USER:sms_user}
+    password: ${DB_PASSWORD:sms_pass}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+  mail:
+    host: ${MAIL_HOST:localhost}
+    port: ${MAIL_PORT:1025}
+    username: ${SPRING_MAIL_USERNAME:}
+    password: ${SPRING_MAIL_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: ${MAIL_SMTP_AUTH:false}
+          starttls:
+            enable: ${MAIL_SMTP_STARTTLS:false}
+
+jwt:
+  secret: ${JWT_SECRET:StudentManagementSystemSecretKeyForJWT2024MustBeLongEnough}
+  expiration-ms: 86400000
+
+app:
+  registration:
+    base-url: ${REGISTRATION_BASE_URL:http://localhost:5173/register}
+    code-expiry-days: 7
+  security:
+    allowed-origins: ${APP_SECURITY_ALLOWED_ORIGINS:http://localhost:5173,http://127.0.0.1:5173}
+    max-failed-login-attempts: 5
+    account-lock-minutes: 15
+    max-verification-attempts: 8
+    verification-lock-minutes: 30
+  mail:
+    from: ${MAIL_FROM:noreply@sms.local}
+  bootstrap:
+    admin-email: ${BOOTSTRAP_ADMIN_EMAIL:${MAIL_FROM:}}
+  encryption-key: ${APP_ENCRYPTION_KEY:LocalDevEncryptionKeyChangeInProd}
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
