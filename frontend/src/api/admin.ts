@@ -4,8 +4,6 @@ import type {
   AdminUserRequest,
   AdminUserResponse,
   ApiResponse,
-  CourseRequest,
-  CourseResponse,
   NotificationRequest,
   NotificationResponse,
   StudentRequest,
@@ -100,33 +98,6 @@ export async function updateAdmin(id: number, body: AdminUserRequest) {
 
 export async function deleteAdmin(id: number) {
   await apiClient.delete(`/api/admin/admins/${id}`);
-}
-
-export async function listCourses() {
-  const { data } = await apiClient.get<ApiResponse<CourseResponse[]>>(
-    '/api/admin/courses',
-  );
-  return data.data;
-}
-
-export async function createCourse(body: CourseRequest) {
-  const { data } = await apiClient.post<ApiResponse<CourseResponse>>(
-    '/api/admin/courses',
-    body,
-  );
-  return data;
-}
-
-export async function updateCourse(id: number, body: CourseRequest) {
-  const { data } = await apiClient.put<ApiResponse<CourseResponse>>(
-    `/api/admin/courses/${id}`,
-    body,
-  );
-  return data;
-}
-
-export async function deleteCourse(id: number) {
-  await apiClient.delete(`/api/admin/courses/${id}`);
 }
 
 export async function listNotifications() {

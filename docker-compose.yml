@@ -53,7 +53,7 @@ services:
       MAIL_SMTP_STARTTLS: ${MAIL_SMTP_STARTTLS:-false}
       BOOTSTRAP_ADMIN_EMAIL: ${BOOTSTRAP_ADMIN_EMAIL:-${MAIL_FROM:-admin@sms.local}}
       REGISTRATION_BASE_URL: ${REGISTRATION_BASE_URL:-http://localhost:5173/register}
-      APP_SECURITY_ALLOWED_ORIGINS: ${APP_SECURITY_ALLOWED_ORIGINS:-http://localhost:5173,http://127.0.0.1:5173}
+      APP_SECURITY_ALLOWED_ORIGINS: ${APP_SECURITY_ALLOWED_ORIGINS:-http://localhost:5173,http://127.0.0.1:5173,https://veritascampus.page,https://www.veritascampus.page}
     ports:
       - "8090:8090"
     restart: unless-stopped

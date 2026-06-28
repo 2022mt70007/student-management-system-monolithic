@@ -21,7 +21,7 @@ public class NotificationBootstrapConfig {
             if (notificationRepository.count() == 0) {
                 notificationRepository.save(Notification.builder()
                         .title("Welcome to SMS")
-                        .message("Welcome to the Student Management System. Check your courses and complete registration.")
+                        .message("Welcome to the Student Management System. Check your assigned subjects and complete registration.")
                         .targetRole("STUDENT")
                         .createdAt(LocalDateTime.now())
                         .build());

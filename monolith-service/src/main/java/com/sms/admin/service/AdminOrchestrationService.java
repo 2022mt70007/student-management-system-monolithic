@@ -6,7 +6,7 @@ import com.sms.common.dto.*;
 import com.sms.common.enums.UserRole;
 import com.sms.common.security.EmailValidator;
 import com.sms.common.security.InputSanitizer;
-import com.sms.course.service.CourseService;
+import com.sms.course.service.SubjectService;
 import com.sms.notification.service.NotificationService;
 import com.sms.student.service.StudentService;
 import com.sms.teacher.service.TeacherService;
@@ -24,7 +24,7 @@ public class AdminOrchestrationService {
     private final StudentService studentService;
     private final TeacherService teacherService;
     private final AdminProfileService adminProfileService;
-    private final CourseService courseService;
+    private final SubjectService subjectService;
     private final NotificationService notificationService;
     private final AuthService authService;
     private final EmailService emailService;
@@ -110,20 +110,8 @@ public class AdminOrchestrationService {
         return adminProfileService.findAll();
     }
 
-    public CourseResponse createCourse(CourseRequest request) {
-        return courseService.create(request);
-    }
-
-    public CourseResponse updateCourse(Long id, CourseRequest request) {
-        return courseService.update(id, request);
-    }
-
-    public void deleteCourse(Long id) {
-        courseService.delete(id);
-    }
-
-    public List<CourseResponse> listCourses() {
-        return courseService.findAll();
+    public List<SubjectResponse> listSubjects() {
+        return subjectService.findAll();
     }
 
     public NotificationResponse createNotification(NotificationRequest request) {
@@ -151,7 +139,7 @@ public class AdminOrchestrationService {
         dashboard.put("students", listStudents());
         dashboard.put("teachers", listTeachers());
         dashboard.put("admins", listAdmins());
-        dashboard.put("courses", listCourses());
+        dashboard.put("subjects", listSubjects());
         dashboard.put("notifications", listNotifications());
         return dashboard;
     }

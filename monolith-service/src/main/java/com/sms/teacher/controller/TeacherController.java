@@ -19,9 +19,10 @@ public class TeacherController {
     private final TeacherService teacherService;
 
     @GetMapping("/api/teachers/dashboard")
-    @Operation(summary = "Teacher dashboard with courses, notifications, and students")
-    public ResponseEntity<ApiResponse<TeacherDashboardResponse>> dashboard() {
-        return ResponseEntity.ok(ApiResponse.ok(teacherService.dashboard()));
+    @Operation(summary = "Teacher dashboard with assigned subjects, notifications, and students in the teacher's class")
+    public ResponseEntity<ApiResponse<TeacherDashboardResponse>> dashboard(
+            @RequestHeader("X-Profile-Id") Long profileId) {
+        return ResponseEntity.ok(ApiResponse.ok(teacherService.dashboard(profileId)));
     }
 
     @GetMapping("/api/teachers/me")

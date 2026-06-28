@@ -94,28 +94,6 @@ public class AdminController {
         return ResponseEntity.ok(ApiResponse.ok("Admin deleted", null));
     }
 
-    @GetMapping("/courses")
-    public ResponseEntity<ApiResponse<List<CourseResponse>>> listCourses() {
-        return ResponseEntity.ok(ApiResponse.ok(adminService.listCourses()));
-    }
-
-    @PostMapping("/courses")
-    public ResponseEntity<ApiResponse<CourseResponse>> createCourse(@Valid @RequestBody CourseRequest request) {
-        return ResponseEntity.ok(ApiResponse.ok(adminService.createCourse(request)));
-    }
-
-    @PutMapping("/courses/{id}")
-    public ResponseEntity<ApiResponse<CourseResponse>> updateCourse(
-            @PathVariable Long id, @Valid @RequestBody CourseRequest request) {
-        return ResponseEntity.ok(ApiResponse.ok(adminService.updateCourse(id, request)));
-    }
-
-    @DeleteMapping("/courses/{id}")
-    public ResponseEntity<ApiResponse<Void>> deleteCourse(@PathVariable Long id) {
-        adminService.deleteCourse(id);
-        return ResponseEntity.ok(ApiResponse.ok("Course deleted", null));
-    }
-
     @GetMapping("/notifications")
     public ResponseEntity<ApiResponse<List<NotificationResponse>>> listNotifications() {
         return ResponseEntity.ok(ApiResponse.ok(adminService.listNotifications()));

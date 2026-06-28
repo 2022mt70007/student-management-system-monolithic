@@ -4,7 +4,7 @@ import com.sms.common.dto.*;
 import com.sms.common.enums.RegistrationStatus;
 import com.sms.common.security.InputSanitizer;
 import com.sms.course.service.AcademicStructureService;
-import com.sms.course.service.CourseService;
+import com.sms.course.service.SubjectService;
 import com.sms.notification.service.NotificationService;
 import com.sms.student.service.StudentService;
 import com.sms.teacher.entity.Teacher;
@@ -21,8 +21,8 @@ import java.util.List;
 public class TeacherService {
 
     private final TeacherRepository teacherRepository;
-    private final CourseService courseService;
     private final AcademicStructureService academicStructureService;
+    private final SubjectService subjectService;
     private final NotificationService notificationService;
     private final StudentService studentService;
 
@@ -103,11 +103,27 @@ public class TeacherService {
     }
 
     @Transactional(readOnly = true)
-    public TeacherDashboardResponse dashboard() {
+    public List<SubjectResponse> getAssignedSubjects(Long profileId) {
+        Teacher teacher = teacherRepository.findById(profileId)
+                .orElseThrow(() -> new IllegalArgumentException("Teacher not found"));
+        if (teacher.getSubjectIds() == null || teacher.getSubjectIds().isEmpty()) {
+            return List.of();
+        }
+        return subjectService.findByIds(teacher.getSubjectIds());
+    }
+
+    @Transactional(readOnly = true)
+    public TeacherDashboardResponse dashboard(Long profileId) {
+        Teacher teacher = teacherRepository.findById(profileId)
+                .orElseThrow(() -> new IllegalArgumentException("Teacher not found"));
+
+        List<StudentResponse> students = studentService.findByDepartmentAndClass(
+                teacher.getDepartmentId(), teacher.getClassId());
+
         return TeacherDashboardResponse.builder()
-                .courses(courseService.findAll())
+                .subjects(getAssignedSubjects(profileId))
                 .notifications(notificationService.findAll("TEACHER"))
-                .students(studentService.findAll())
+                .students(students)
                 .build();
     }
 

@@ -96,7 +96,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (path.startsWith("/api/academic/")) {
             return "ADMIN".equals(role);
         }
-        if (path.startsWith("/api/courses/") || path.startsWith("/api/notifications/")) {
+        if (path.startsWith("/api/notifications/")) {
             return Set.of("ADMIN", "TEACHER", "STUDENT").contains(role);
         }
         return true;

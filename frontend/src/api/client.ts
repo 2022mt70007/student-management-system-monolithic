@@ -42,8 +42,10 @@ if (stored?.token) {
 }
 
 apiClient.interceptors.request.use((config) => {
+  const url = config.url ?? '';
+  const isAuthRoute = url.includes('/api/auth/');
   const auth = loadStoredAuth();
-  if (auth?.profileId != null) {
+  if (!isAuthRoute && auth?.profileId != null) {
     config.headers['X-Profile-Id'] = String(auth.profileId);
     config.headers['X-User-Email'] = auth.email;
     config.headers['X-User-Role'] = auth.role;
@@ -54,9 +56,11 @@ apiClient.interceptors.request.use((config) => {
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
+    const data = error.response?.data;
     const message =
-      error.response?.data?.message ||
-      error.response?.data?.error ||
+      (typeof data === 'object' && data !== null && 'message' in data && data.message) ||
+      (typeof data === 'object' && data !== null && 'error' in data && data.error) ||
+      (typeof data === 'string' ? data : null) ||
       error.message ||
       'Request failed';
     return Promise.reject(new Error(message));

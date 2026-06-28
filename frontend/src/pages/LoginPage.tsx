@@ -16,7 +16,10 @@ export function LoginPage() {
     setError('');
     setLoading(true);
     try {
-      const role = await login({ email, password });
+      const role = await login({
+        email: email.trim(),
+        password: password.trim(),
+      });
       navigate(roleHomePath(role));
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Login failed');
