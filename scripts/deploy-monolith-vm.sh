@@ -1,17 +1,42 @@
 #!/usr/bin/env bash
 # Deploy monolith to VM (veritascampus.page). Run from repo root on the server.
+#
+# One-time VM setup:
+#   cd /opt
+#   git clone https://github.com/2022mt70007/student-management-system-monolithic.git sms-monolith
+#   cd sms-monolith && git checkout feature/firstBrach
+#   cp .env.production.example .env && nano .env
+#   chmod +x scripts/deploy-monolith-vm.sh && ./scripts/deploy-monolith-vm.sh
+#
+# After you push changes from your PC:
+#   cd /opt/sms-monolith && ./scripts/deploy-monolith-vm.sh
+
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
+
+if [[ -d .git ]]; then
+  echo "==> Pulling latest code from git..."
+  git fetch origin
+  git pull --ff-only origin "$(git rev-parse --abbrev-ref HEAD)"
+else
+  echo "Warning: not a git repo — deploy uses files on disk only."
+  echo "Clone from GitHub: git clone https://github.com/2022mt70007/student-management-system-monolithic.git"
+fi
 
 if [[ ! -f .env ]]; then
   echo "Missing .env — copy .env.production.example to .env and fill in values."
   exit 1
 fi
 
+DOCKER="docker"
+if ! docker info >/dev/null 2>&1; then
+  DOCKER="sudo docker"
+fi
+
 echo "==> Building and starting backend (docker compose prod)..."
-docker compose -f docker-compose.prod.yml --env-file .env up -d --build
+$DOCKER compose -f docker-compose.prod.yml --env-file .env up -d --build
 
 echo "==> Waiting for monolith to start..."
 sleep 8
@@ -37,9 +62,5 @@ sudo nginx -t
 sudo systemctl reload nginx
 
 echo ""
-echo "Done. Next steps:"
-echo "  1. Ensure DNS A records for veritascampus.page -> this VM IP"
-echo "  2. HTTPS: sudo certbot --nginx -d veritascampus.page -d www.veritascampus.page"
-echo "  3. Open https://veritascampus.page/register and complete admin registration"
-echo ""
-echo "Logs: docker logs sms-monolith -f"
+echo "Done."
+echo "Logs: $DOCKER logs sms-monolith -f"
