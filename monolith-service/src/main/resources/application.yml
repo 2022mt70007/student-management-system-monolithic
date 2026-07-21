@@ -36,9 +36,13 @@ app:
   registration:
     base-url: ${REGISTRATION_BASE_URL:http://localhost:5173/register}
     code-expiry-days: 7
+  password-reset:
+    base-url: ${PASSWORD_RESET_BASE_URL:http://localhost:5173/reset-password}
+    code-expiry-minutes: 30
   security:
     allowed-origins: ${APP_SECURITY_ALLOWED_ORIGINS:http://localhost:5173,http://127.0.0.1:5173}
-    max-failed-login-attempts: 5
+    max-failed-login-attempts: 6
+    lockout-warning-after-attempts: 3
     account-lock-minutes: 15
     max-verification-attempts: 8
     verification-lock-minutes: 30

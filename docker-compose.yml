@@ -51,9 +51,10 @@ services:
       SPRING_MAIL_PASSWORD: ${SES_SMTP_PASSWORD:-}
       MAIL_SMTP_AUTH: ${MAIL_SMTP_AUTH:-false}
       MAIL_SMTP_STARTTLS: ${MAIL_SMTP_STARTTLS:-false}
+      PASSWORD_RESET_BASE_URL: ${PASSWORD_RESET_BASE_URL:-http://localhost:5173/reset-password}
       BOOTSTRAP_ADMIN_EMAIL: ${BOOTSTRAP_ADMIN_EMAIL:-${MAIL_FROM:-admin@sms.local}}
       REGISTRATION_BASE_URL: ${REGISTRATION_BASE_URL:-http://localhost:5173/register}
-      APP_SECURITY_ALLOWED_ORIGINS: ${APP_SECURITY_ALLOWED_ORIGINS:-http://localhost:5173,http://127.0.0.1:5173}
+      APP_SECURITY_ALLOWED_ORIGINS: ${APP_SECURITY_ALLOWED_ORIGINS:-http://localhost:5173,http://127.0.0.1:5173,https://veritascampus.page,https://www.veritascampus.page}
     ports:
       - "8090:8090"
     restart: unless-stopped

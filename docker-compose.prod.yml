@@ -1,0 +1,59 @@
+# Production compose for VM deploy (veritascampus.page).
+# Usage: docker compose -f docker-compose.prod.yml --env-file .env up -d --build
+#
+# - No MailHog (use AWS SES via .env)
+# - MySQL not exposed to the internet
+# - API bound to localhost only (nginx proxies /api)
+
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: sms-monolith-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root_pass}
+      MYSQL_DATABASE: sms_monolith_db
+      MYSQL_USER: ${DB_USER:-sms_user}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-sms_pass}
+    volumes:
+      - monolith_mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u${DB_USER:-sms_user}", "-p${DB_PASSWORD:-sms_pass}"]
+      interval: 5s
+      timeout: 5s
+      retries: 15
+    restart: unless-stopped
+
+  monolith:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: sms-monolith
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      SERVER_PORT: 8090
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_NAME: ${DB_NAME:-sms_monolith_db}
+      DB_USER: ${DB_USER:-sms_user}
+      DB_PASSWORD: ${DB_PASSWORD:-sms_pass}
+      JWT_SECRET: ${JWT_SECRET}
+      APP_ENCRYPTION_KEY: ${APP_ENCRYPTION_KEY}
+      MAIL_HOST: ${SES_MAIL_HOST}
+      MAIL_PORT: ${SES_MAIL_PORT:-587}
+      MAIL_FROM: ${MAIL_FROM}
+      SPRING_MAIL_USERNAME: ${SES_SMTP_USERNAME}
+      SPRING_MAIL_PASSWORD: ${SES_SMTP_PASSWORD}
+      MAIL_SMTP_AUTH: ${MAIL_SMTP_AUTH:-true}
+      MAIL_SMTP_STARTTLS: ${MAIL_SMTP_STARTTLS:-true}
+      BOOTSTRAP_ADMIN_EMAIL: ${BOOTSTRAP_ADMIN_EMAIL}
+      REGISTRATION_BASE_URL: ${REGISTRATION_BASE_URL}
+      PASSWORD_RESET_BASE_URL: ${PASSWORD_RESET_BASE_URL:-https://veritascampus.page/reset-password}
+      APP_SECURITY_ALLOWED_ORIGINS: ${APP_SECURITY_ALLOWED_ORIGINS}
+    ports:
+      - "127.0.0.1:8090:8090"
+    restart: unless-stopped
+
+volumes:
+  monolith_mysql_data:

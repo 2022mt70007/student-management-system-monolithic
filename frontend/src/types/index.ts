@@ -34,6 +34,25 @@ export interface SetPasswordRequest {
   password: string;
 }
 
+export interface ForgotPasswordRequest {
+  email: string;
+}
+
+export interface ResetPasswordRequest {
+  email: string;
+  code: string;
+  newPassword: string;
+}
+
+export interface LoginErrorDetails {
+  code?: string;
+  locked?: boolean;
+  failedAttempts?: number;
+  maxAttempts?: number;
+  remainingAttempts?: number;
+  warnLockout?: boolean;
+}
+
 export type AcademicStatus = 'ACTIVE' | 'INACTIVE';
 
 export interface DepartmentRequest {
@@ -118,14 +137,6 @@ export interface AdminUserRequest {
   address?: string;
 }
 
-export interface CourseRequest {
-  title: string;
-  description?: string;
-  department?: string;
-  instructor?: string;
-  credits?: number;
-}
-
 export interface NotificationRequest {
   title: string;
   message: string;
@@ -175,60 +186,12 @@ export interface AdminUserResponse {
   status: RegistrationStatus;
 }
 
-export interface CourseResponse {
-  id: number;
-  title: string;
-  description?: string;
-  department?: string;
-  instructor?: string;
-  credits?: number;
-}
-
 export interface NotificationResponse {
   id: number;
   title: string;
   message: string;
   targetRole?: string;
   createdAt?: string;
-}
-
-export interface StudentProgressResponse {
-  courseId: number;
-  courseTitle: string;
-  progressPercent: number;
-}
-
-export type AssignmentPriorityStatus = 'OVERDUE' | 'DUE_SOON' | 'UPCOMING';
-export type ExamPriorityStatus = 'EXAM_SOON' | 'UPCOMING';
-
-export interface AssignmentResponse {
-  id: number;
-  courseId: number;
-  title: string;
-  description?: string;
-  dueDate: string;
-  priorityStatus: AssignmentPriorityStatus;
-}
-
-export interface ExamResponse {
-  id: number;
-  courseId: number;
-  title: string;
-  description?: string;
-  scheduledDate: string;
-  priorityStatus: ExamPriorityStatus;
-}
-
-export interface StudentEnrolledCourseResponse {
-  id: number;
-  title: string;
-  description?: string;
-  department?: string;
-  instructor?: string;
-  credits?: number;
-  progressPercent: number;
-  assignments: AssignmentResponse[];
-  exams: ExamResponse[];
 }
 
 export interface StudentDashboardResponse {
@@ -241,7 +204,7 @@ export interface StudentDashboardResponse {
 }
 
 export interface TeacherDashboardResponse {
-  courses: CourseResponse[];
+  subjects: SubjectResponse[];
   notifications: NotificationResponse[];
   students: StudentResponse[];
 }
@@ -250,7 +213,7 @@ export interface AdminDashboardResponse {
   students: StudentResponse[];
   teachers: TeacherResponse[];
   admins: AdminUserResponse[];
-  courses: CourseResponse[];
+  subjects: SubjectResponse[];
   notifications: NotificationResponse[];
 }
 
