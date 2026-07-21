@@ -25,6 +25,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private static final List<String> PUBLIC_PATHS = List.of(
             "/api/auth/login",
             "/api/auth/register",
+            "/api/auth/forgot-password",
+            "/api/auth/reset-password",
             "/swagger-ui",
             "/v3/api-docs",
             "/webjars"
@@ -78,7 +80,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private boolean isRoleAllowed(String path, String role) {
-        if (path.contains("/internal/")) {
+        if (path.contains("/internal")) {
             return false;
         }
         if (path.startsWith("/api/admin/")) {
